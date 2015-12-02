@@ -1,0 +1,16 @@
+{
+    "name": "kevin/orm",
+    "description": "Creation d'un ORM pour le cours de LAMP a SUP'Internet",
+    "authors": [
+        {
+            "name": "Kevin Depuydt",
+            "email": "kevin.depuydt@supinternet.fr"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "App\\": "src"
+        }
+    },
+    "require": {}
+}
