@@ -21,7 +21,7 @@ class TableManager implements TableManagerInterface
 
     public function __construct($name)
     {
-        $this->db = ConnexionManager::getConnexion();
+        $this->db = Orm::getConnexion();
         $this->setName($name);
     }
 
@@ -43,14 +43,14 @@ class TableManager implements TableManagerInterface
 
         $this->query .= '(' . $this->buildFields($this->fieldsQuery) . ')';
 
-        return ConnexionManager::getConnexion()->prepare($this->query)->execute();
+        return Orm::getConnexion()->prepare($this->query)->execute();
     }
 
     public function remove()
     {
         $this->query = 'DROP TABLE '.$this->tableName;
 
-        return ConnexionManager::getConnexion()->prepare($this->query)->execute();
+        return Orm::getConnexion()->prepare($this->query)->execute();
     }
 
     public function edit()

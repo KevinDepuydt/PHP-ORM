@@ -8,10 +8,9 @@
 
 namespace App\Orm;
 
-use Exception,
-    App\Exceptions\ConnexionException;
+use App\Exceptions\ConnexionException;
 
-class ConnexionManager extends \PDO
+class Orm extends \PDO
 {
     private static $connexion = null;
 
@@ -32,4 +31,5 @@ class ConnexionManager extends \PDO
     {
         return self::$connexion;
     }
+
 }
