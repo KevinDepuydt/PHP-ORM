@@ -8,8 +8,16 @@
 
 require_once 'vendor/autoload.php';
 
-use App\Orm\ConnexionManager;
+use App\Orm\Orm, App\Entity\User;
 
-ConnexionManager::init('127.0.0.1', 'orm', 'root', '');
+Orm::init('127.0.0.1', 'orm', 'root', '');
 
-var_dump(ConnexionManager::getConnexion());
+var_dump(Orm::getConnexion());
+
+$user = new User();
+$user->setLogin('login');
+$user->setEmail('mail@mail.fr');
+$user->setPassword(sha1('password'));
+$user->persist();
+
+var_dump($user);
