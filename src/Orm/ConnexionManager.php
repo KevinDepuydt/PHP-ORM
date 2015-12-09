@@ -8,24 +8,28 @@
 
 namespace App\Orm;
 
+use Exception,
+    App\Exceptions\ConnexionException;
 
 class ConnexionManager extends \PDO
 {
-
     private static $connexion = null;
 
     public static function init($host, $db, $user, $password)
     {
-        self::$connexion = new \PDO('mysql:host='.$host.';dbname='.$db.'', $user, $password, [
-                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]
-        );
+        try {
+            self::$connexion = new \PDO('mysql:host='.$host.';dbname='.$db.'', $user, $password, [
+                    \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
+            ]);
+            self::$connexion->query("SET NAMES utf8");
 
-        self::$connexion->query("SET NAMES utf8");
+        } catch (ConnexionException $e) {
+            throw new ConnexionException('Impossible de se connecter a la base de données '.$db.' : '.$e->getMessage());
+        }
     }
 
     public static function getConnexion()
     {
         return self::$connexion;
     }
-
 }
