@@ -8,14 +8,17 @@
 
 namespace App\Entity;
 
+use App\Exceptions\QueryManagerException;
+use App\Orm\QueryManager;
 
-class User
+class User extends QueryManager
 {
     /** PROPERTIES */
     private $tableName = 'user';
     private $login;
     private $mail;
     private $password;
+    private $isuniq = 'login';
 
     public function __construct()
     {
@@ -44,7 +47,7 @@ class User
         return $this->login;
     }
 
-    public function getEmail()
+    public function getMail()
     {
         return $this->mail;
     }
@@ -54,10 +57,37 @@ class User
         return $this->password;
     }
 
-    /** PERSIST */
-    public function persist()
+    /** ORM NEEDLE */
+    public function getTableName()
     {
+        return $this->tableName;
+    }
 
+    public function getIsuniq()
+    {
+        return $this->isuniq;
+    }
+
+    /** SAVE */
+    public function save()
+    {
+        $this->persist($this);
+    }
+
+    /** METHODS */
+    public function getById($id)
+    {
+        return $this->select($this->tableName)->where('id = '.$id)->execute();
+    }
+
+    public function getByLogin($id)
+    {
+        return $this->select($this->tableName)->where('login = \''.$id.'\'')->execute();
+    }
+
+    public function getByMail($mail)
+    {
+        return $this->select($this->tableName)->where('mail = \''.$mail.'\'')->execute();
     }
 
 }
