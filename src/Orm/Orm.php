@@ -13,6 +13,8 @@ use App\Exceptions\ConnexionException;
 class Orm extends \PDO
 {
     private static $connexion = null;
+    private static $logSqlPath = 'log/access.log';
+    private static $logErrorPath = 'log/error.log';
 
     public static function init($host, $db, $user, $password)
     {
@@ -31,5 +33,32 @@ class Orm extends \PDO
     {
         return self::$connexion;
     }
+
+    public static function logSql($sql)
+    {
+        if (file_exists(self::$logSqlPath))
+            $file = file_get_contents(self::$logSqlPath);
+        else
+            $file = '';
+
+        $file .= "[".date("d-m-Y H:i:s")."] La requete SQL >> ".$sql." << a été exécutée\n";
+
+        file_put_contents(self::$logSqlPath, $file);
+    }
+
+    public static function logError($sql)
+    {
+        if (file_exists(self::$logErrorPath))
+            $file = file_get_contents(self::$logErrorPath);
+        else
+            $file = '';
+
+        $file .= "[".date("d-m-Y H:i:s")."] La requete SQL >> ".$sql." << a échouée\n";
+
+        file_put_contents(self::$logErrorPath, $file);
+
+    }
+
+
 
 }
