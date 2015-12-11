@@ -12,7 +12,7 @@ interface TableManagerInterface
 {
     public function create();
     public function edit();
-    public function delete();
+    public function remove();
     public function addField($name, $type); // @return $this
     public function removeField($name);
 }

@@ -59,11 +59,6 @@ class TableManager implements TableManagerInterface
 
     }
 
-    public function delete()
-    {
-        $this->query = '';
-    }
-
     public function addField($name, $type, $size = null)
     {
 
