@@ -9,6 +9,7 @@
 namespace App\Orm;
 
 use App\Exceptions\ConnexionException;
+use App\Exceptions\QueryManagerException;
 
 class Orm extends \PDO
 {
@@ -46,14 +47,14 @@ class Orm extends \PDO
         file_put_contents(self::$logSqlPath, $file);
     }
 
-    public static function logError($sql)
+    public static function logError($sql,\Exception $e)
     {
         if (file_exists(self::$logErrorPath))
             $file = file_get_contents(self::$logErrorPath);
         else
             $file = '';
 
-        $file .= "[".date("d-m-Y H:i:s")."] La requete SQL >> ".$sql." << a échouée\n";
+        $file .= "[".date("d-m-Y H:i:s")."] La requete SQL >> ".$sql." << a échouée, erreur : " . $e->getMessage() . "\n";
 
         file_put_contents(self::$logErrorPath, $file);
 

@@ -66,23 +66,53 @@ class QueryManager implements QueryManagerInterface
     /** HELPERS */
     public function count($tablename)
     {
-        $result = Orm::getConnexion()->prepare('SELECT COUNT(id) FROM '.$tablename);
-        $result->execute();
-        return $result->fetch(\PDO::FETCH_COLUMN);
+        $query = 'SELECT COUNT(id) FROM '.$tablename;
+        $result = null;
+        try {
+            $result = Orm::getConnexion()->prepare($query);
+            $result->execute();
+            $result = $result->fetch(\PDO::FETCH_COLUMN);
+        } catch (\Exception $e) {
+            Orm::logError($query, $e);
+        }
+
+        Orm::logSql($query);
+
+        return $result;
     }
 
     public function exist($tablename, $field, $value)
     {
-        $result = Orm::getConnexion()->prepare('SELECT ' . $field . ' FROM '.$tablename. ' WHERE ' . $field . ' = \'' . $value . '\'');
-        $result->execute();
-        return ($result->fetch(\PDO::FETCH_COLUMN)) ? true : false;
+        $query = 'SELECT ' . $field . ' FROM '.$tablename. ' WHERE ' . $field . ' = \'' . $value . '\'';
+        $result = null;
+        try {
+            $result = Orm::getConnexion()->prepare($query);
+            $result->execute();
+            $result = ($result->fetch(\PDO::FETCH_COLUMN)) ? true : false;
+        } catch (\Exception $e) {
+            Orm::logError($query, $e);
+        }
+
+        Orm::logSql($query);
+
+        return $result;
     }
 
     public function getTableColumns($tablename)
     {
-        $result = Orm::getConnexion()->prepare('DESCRIBE '.$tablename);
-        $result->execute();
-        return $result->fetchAll(\PDO::FETCH_COLUMN);
+        $query = 'DESCRIBE '.$tablename;
+        $result = null;
+        try {
+            $result = Orm::getConnexion()->prepare($query);
+            $result->execute();
+            $result = $result->fetchAll(\PDO::FETCH_COLUMN);
+        } catch (\Exception $e) {
+            Orm::logError($query, $e);
+        }
+
+        Orm::logSql($query);
+
+        return $result;
     }
 
     /** QUERIES CONDITIONS */
@@ -137,24 +167,29 @@ class QueryManager implements QueryManagerInterface
         $this->build();
 
         $result = null;
+        try {
 
-        switch ($this->type) {
-            case 'select':
-                $result = Orm::getConnexion()->prepare($this->query);
-                $result->execute();
-                $result =  $result->fetchAll(\PDO::FETCH_ASSOC);
-                break;
-            case 'insert':
-                $result = Orm::getConnexion()->prepare($this->query)->execute();
-                break;
-            case 'delete':
-                break;
-            case 'update':
-                $result = Orm::getConnexion()->prepare($this->query)->execute();
-                break;
-            default:
-                throw new QueryManagerException('Unknown query type');
-                break;
+            switch ($this->type) {
+                case 'select':
+                    $result = Orm::getConnexion()->prepare($this->query);
+                    $result->execute();
+                    $result =  $result->fetchAll(\PDO::FETCH_ASSOC);
+                    break;
+                case 'insert':
+                    $result = Orm::getConnexion()->prepare($this->query)->execute();
+                    break;
+                case 'delete':
+                    break;
+                case 'update':
+                    $result = Orm::getConnexion()->prepare($this->query)->execute();
+                    break;
+                default:
+                    throw new QueryManagerException('Unknown query type');
+                    break;
+            }
+
+        } catch (\Exception $e) {
+            Orm::logError($this->query, $e);
         }
 
         Orm::logSql($this->query);
@@ -253,8 +288,18 @@ class QueryManager implements QueryManagerInterface
 
     public function getItemById($table, $where)
     {
-        $result = Orm::getConnexion()->prepare('SELECT id FROM '.$table.' WHERE ' . $where);
-        $result->execute();
-        return $result->fetch(\PDO::FETCH_ASSOC)['id'];
+        $query = 'SELECT id FROM '.$table.' WHERE ' . $where;
+        $result = null;
+        try {
+            $result = Orm::getConnexion()->prepare($query);
+            $result->execute();
+            $result = $result->fetch(\PDO::FETCH_ASSOC)['id'];
+        } catch (\Exception $e) {
+            Orm::logError($query, $e);
+        }
+
+        Orm::logSql($query);
+
+        return $result;
     }
 }
