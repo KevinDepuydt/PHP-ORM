@@ -1,93 +1,81 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Kévin
- * Date: 09/12/2015
- * Time: 12:03
- */
 
 namespace App\Entity;
 
-use App\Exceptions\QueryManagerException;
 use App\Orm\QueryManager;
 
 class User extends QueryManager
 {
-    /** PROPERTIES */
-    private $tableName = 'user';
-    private $login;
-    private $mail;
-    private $password;
-    private $isuniq = 'login';
+	/** PROPERTIES */
+	private $tableName = "user";
+	private $login;
+	private $email;
+	private $password;
+	private $isUnique = "login";
 
-    public function __construct()
-    {
-    }
+	/** SETTER */
+	public function setLogin($login)
+	{
+		$this->login = $login;
+	}
 
-    /** SETTER */
-    public function setLogin($login)
-    {
-        $this->login = $login;
-    }
+	public function setEmail($email)
+	{
+		$this->email = $email;
+	}
 
-    public function setEmail($mail)
-    {
-        $this->mail = $mail;
-    }
+	public function setPassword($password)
+	{
+		$this->password = $password;
+	}
 
-    public function setPassword($password)
-    {
-        $this->password = $password;
-    }
+	/** GETTER */
+	public function getLogin()
+	{
+		return $this->login;
+	}
 
+	public function getEmail()
+	{
+		return $this->email;
+	}
 
-    /** GETTER */
-    public function getLogin()
-    {
-        return $this->login;
-    }
+	public function getPassword()
+	{
+		return $this->password;
+	}
 
-    public function getMail()
-    {
-        return $this->mail;
-    }
+	/** ORM NEEDLE */
+	public function getTableName()
+	{
+		return $this->tableName;
+	}
 
-    public function getPassword()
-    {
-        return $this->password;
-    }
+	public function getIsUnique()
+	{
+		return $this->isUnique;
+	}
 
-    /** ORM NEEDLE */
-    public function getTableName()
-    {
-        return $this->tableName;
-    }
+	/** SAVE */
+	public function save()
+	{
+		$this->persist($this);
+	}
 
-    public function getIsuniq()
-    {
-        return $this->isuniq;
-    }
+	/** METHODS */
+	public function getById($id)
+	{
+		return $this->select($this->tableName)->where('id = \''.$id.'\'')->execute();
+	}
 
-    /** SAVE */
-    public function save()
-    {
-        $this->persist($this);
-    }
+	public function getByLogin($login)
+	{
+		return $this->select($this->tableName)->where('login = \''.$login.'\'')->execute();
+	}
 
-    /** METHODS */
-    public function getById($id)
-    {
-        return $this->select($this->tableName)->where('id = '.$id)->execute();
-    }
-
-    public function getByLogin($id)
-    {
-        return $this->select($this->tableName)->where('login = \''.$id.'\'')->execute();
-    }
-
-    public function getByMail($mail)
-    {
-        return $this->select($this->tableName)->where('mail = \''.$mail.'\'')->execute();
-    }
+	public function getByEmail($email)
+	{
+		return $this->select($this->tableName)->where('email = \''.$email.'\'')->execute();
+	}
 
 }
