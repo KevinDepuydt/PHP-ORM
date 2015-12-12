@@ -35,6 +35,41 @@ class Orm extends \PDO
         return self::$connexion;
     }
 
+    public static function getUniqueColumnName($table)
+    {
+        $result = null;
+        $query = "SELECT DISTINCT CONSTRAINT_NAME as unique_field FROM information_schema.TABLE_CONSTRAINTS WHERE table_name = '".$table."' and constraint_type = 'UNIQUE'";
+
+        try {
+            $result = Orm::getConnexion()->prepare($query);
+            $result->execute();
+            $result = $result->fetch(\PDO::FETCH_ASSOC)['unique_field'];
+        } catch (\Exception $e) {
+            Orm::logError($query, $e);
+        }
+
+        Orm::logSql($query);
+
+        return $result;
+    }
+
+    public static function getTableColumns($tablename)
+    {
+        $query = 'DESCRIBE '.$tablename;
+        $result = null;
+        try {
+            $result = Orm::getConnexion()->prepare($query);
+            $result->execute();
+            $result = $result->fetchAll(\PDO::FETCH_COLUMN);
+        } catch (\Exception $e) {
+            Orm::logError($query, $e);
+        }
+
+        Orm::logSql($query);
+
+        return $result;
+    }
+
     public static function logSql($sql)
     {
         if (!LOG_ACTIVE)
