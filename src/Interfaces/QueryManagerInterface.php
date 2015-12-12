@@ -11,7 +11,7 @@ namespace App\Interfaces;
 interface QueryManagerInterface
 {
     public function select($name, $field);
-    public function delete();
+    public function delete($tablename);
     public function update($tablename);
     public function insert($tablename);
     public function count($tablename);

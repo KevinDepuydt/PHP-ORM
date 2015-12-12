@@ -50,9 +50,12 @@ class QueryManager implements QueryManagerInterface
         return $this;
     }
 
-    public function delete()
+    public function delete($tablename)
     {
+        $this->type = 'delete';
+        $this->baseQuery = 'DELETE FROM ' . $tablename;
 
+        return $this;
     }
 
     public function update($tablename)
@@ -138,22 +141,33 @@ class QueryManager implements QueryManagerInterface
     private function build()
     {
         switch ($this->type) {
+
             case 'select':
                 $where = (!empty($this->where)) ? ' WHERE ' . $this->where : '';
-                $join = (!empty($this->join)) ? $this->join : '';
+                $join = (!empty($this->join)) ? ' ' . $this->join : '';
                 $orderBy = (!empty($this->orderBy)) ? ' ORDER BY ' . $this->orderBy : '';
                 $this->where = $this->join = $this->orderBy = [];
                 $this->query = $this->baseQuery . $join . $where . $orderBy;
                 break;
+
             case 'insert':
                 $this->query = $this->baseQuery . $this->buildInsertFieldsAndValues();
                 break;
+
             case 'delete':
+                if (empty($this->where))
+                    throw new QueryManagerException('Where clause can\'t be empty');
+                $where = ' WHERE ' . $this->where;
+                $this->query = $this->baseQuery . $where;
                 break;
+
             case 'update':
-                $where = (!empty($this->where)) ? ' WHERE ' . $this->where : '';
+                if (empty($this->where))
+                    throw new QueryManagerException('Where clause can\'t be empty');
+                $where = ' WHERE ' . $this->where;
                 $this->query = $this->baseQuery . $this->buildUpdateFieldsAndValues() . $where;
                 break;
+
             default:
                 throw new QueryManagerException('Unknown query type');
                 break;
@@ -176,10 +190,7 @@ class QueryManager implements QueryManagerInterface
                     $result =  $result->fetchAll(\PDO::FETCH_ASSOC);
                     break;
                 case 'insert':
-                    $result = Orm::getConnexion()->prepare($this->query)->execute();
-                    break;
                 case 'delete':
-                    break;
                 case 'update':
                     $result = Orm::getConnexion()->prepare($this->query)->execute();
                     break;
