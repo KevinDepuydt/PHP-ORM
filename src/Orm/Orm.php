@@ -37,6 +37,9 @@ class Orm extends \PDO
 
     public static function logSql($sql)
     {
+        if (!LOG_ACTIVE)
+            return true;
+
         if (file_exists(self::$logSqlPath))
             $file = file_get_contents(self::$logSqlPath);
         else
@@ -49,6 +52,9 @@ class Orm extends \PDO
 
     public static function logError($sql,\Exception $e)
     {
+        if (!LOG_ACTIVE)
+            return true;
+
         if (file_exists(self::$logErrorPath))
             $file = file_get_contents(self::$logErrorPath);
         else
@@ -59,7 +65,4 @@ class Orm extends \PDO
         file_put_contents(self::$logErrorPath, $file);
 
     }
-
-
-
 }
