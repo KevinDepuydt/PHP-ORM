@@ -103,19 +103,7 @@ class QueryManager implements QueryManagerInterface
 
     public function getTableColumns($tablename)
     {
-        $query = 'DESCRIBE '.$tablename;
-        $result = null;
-        try {
-            $result = Orm::getConnexion()->prepare($query);
-            $result->execute();
-            $result = $result->fetchAll(\PDO::FETCH_COLUMN);
-        } catch (\Exception $e) {
-            Orm::logError($query, $e);
-        }
-
-        Orm::logSql($query);
-
-        return $result;
+        return Orm::getTableColumns($tablename);
     }
 
     /** QUERIES CONDITIONS */
@@ -287,7 +275,7 @@ class QueryManager implements QueryManagerInterface
 
             }
 
-            $where = $object->getIsUniq().' = \''.$object->$callable[$object->getIsUniq()]().'\'';
+            $where = $object->getIsUnique().' = \''.$object->$callable[$object->getIsUnique()]().'\'';
 
             $this->where('id = '.$this->getItemById($className, $where));
 
