@@ -2,3 +2,4 @@
 /help/
 /.idea/
 log/
+src/Entity/*
