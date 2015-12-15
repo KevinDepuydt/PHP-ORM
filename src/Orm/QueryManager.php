@@ -87,6 +87,7 @@ class QueryManager implements QueryManagerInterface
     public function exist($tablename, $field, $value)
     {
         $query = 'SELECT ' . $field . ' FROM '.$tablename. ' WHERE ' . $field . ' = \'' . $value . '\'';
+
         $result = null;
         try {
             $result = Orm::getConnexion()->prepare($query);
@@ -232,7 +233,9 @@ class QueryManager implements QueryManagerInterface
 
         $columns = $this->getTableColumns($className);
         $callable = [];
-        $insert = true;
+        $uniqueField = $object->getIsUnique();
+        $uniqueMethod = 'get'.ucfirst($uniqueField);
+        $exist = $this->exist($className, $uniqueField, $object->$uniqueMethod());
 
         foreach ($columns as $field) {
 
@@ -240,13 +243,9 @@ class QueryManager implements QueryManagerInterface
 
             if (method_exists($object, $method))
                 $callable[$field] = $method;
-
-            if (isset($callable[$field]) && $field !== 'password')
-                if($this->exist($className, $field, $object->$callable[$field]()))
-                    $insert = false;
         }
 
-        if ($insert) {
+        if (!$exist) {
 
             $this->insert($className);
 
@@ -262,7 +261,7 @@ class QueryManager implements QueryManagerInterface
 
             $result = $this->execute();
 
-        } else {
+        } elseif($exist) {
 
             $this->update($className);
 
@@ -275,7 +274,7 @@ class QueryManager implements QueryManagerInterface
 
             }
 
-            $where = $object->getIsUnique().' = \''.$object->$callable[$object->getIsUnique()]().'\'';
+            $where = $uniqueField.' = \''.$object->$callable[$uniqueField]().'\'';
 
             $this->where('id = '.$this->getItemById($className, $where));
 
